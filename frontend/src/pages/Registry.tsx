@@ -3,7 +3,7 @@ import { BottomNav } from "@/components/BottomNav";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
-import { Search, Beef, CheckCircle2, Clock, Users, Plus, Pencil, Eye, Download, Upload } from "lucide-react";
+import { Search, Beef, CheckCircle2, Clock, Users, Plus, Pencil, Eye, Download, Upload, Printer } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Table,
@@ -28,6 +28,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { getRecipients, getAnimals, saveRecipient, saveAnimal, type Recipient, type Animal } from "@/api";
+import { useReactToPrint } from "react-to-print";
+import { CouponPrintTemplate } from "@/components/CouponPrintTemplate";
 
 type DetailItemType = 
   | { type: 'recipient', data: Recipient }
@@ -46,6 +48,12 @@ export default function Registry() {
   const [isAnimalDialogOpen, setIsAnimalDialogOpen] = useState(false);
   const [isDetailDialogOpen, setIsDetailDialogOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
+
+  const printRef = useRef<HTMLDivElement>(null);
+  const handlePrint = useReactToPrint({
+    contentRef: printRef,
+    documentTitle: "Kupon_Kurban",
+  });
 
   const { data: recipients = [] } = useQuery({ queryKey: ['recipients'], queryFn: getRecipients });
   const { data: animals = [] } = useQuery({ queryKey: ['animals'], queryFn: getAnimals });
@@ -234,6 +242,11 @@ export default function Registry() {
           <Button variant="outline" size="icon" onClick={handleDownload} className="rounded-2xl border-2 h-12 w-12 text-primary">
             <Download size={20} />
           </Button>
+          {activeTab === 'recipients' && (
+            <Button variant="outline" size="icon" onClick={() => handlePrint()} className="rounded-2xl border-2 h-12 w-12 text-primary">
+              <Printer size={20} />
+            </Button>
+          )}
           <Button onClick={() => activeTab === 'recipients' ? handleOpenRecipientDialog() : handleOpenAnimalDialog()} size="icon" className="rounded-2xl bg-primary h-12 w-12 shadow-lg">
             <Plus size={24} />
           </Button>
@@ -483,6 +496,7 @@ export default function Registry() {
           )}
         </DialogContent>
       </Dialog>
+      <CouponPrintTemplate ref={printRef} recipients={filteredRecipients} />
       <BottomNav />
     </div>
   );
