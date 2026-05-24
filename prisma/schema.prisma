@@ -1,0 +1,41 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String?
+  password  String
+  role      String   @default("admin")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Recipient {
+  id        String   @id // Nomor Kupon
+  name      String
+  address   String?
+  status    String   @default("Belum") // "Belum" atau "Sudah"
+  note      String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Animal {
+  id        String   @id // Tag Hewan
+  donor     String
+  type      String   @default("Sapi")
+  weight    Float    @default(0)
+  status    String   @default("Antri") // "Antri" atau "Selesai"
+  address   String?
+  note      String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}

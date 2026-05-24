@@ -1,0 +1,77 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 98%;
+    --foreground: 0 0% 5%;
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 5%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 5%;
+    --primary: 158 79% 12%; /* Deep Forest Green */
+    --primary-foreground: 0 0% 100%;
+    --secondary: 158 20% 94%;
+    --secondary-foreground: 158 79% 10%;
+    --muted: 0 0% 92%;
+    --muted-foreground: 0 0% 40%;
+    --accent: 142 71% 45%; /* Emerald Accent */
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 0 0% 88%;
+    --input: 0 0% 88%;
+    --ring: 158 79% 12%;
+    --radius: 0.75rem;
+  }
+
+  .dark {
+    --background: 158 20% 4%;
+    --foreground: 0 0% 98%;
+    --card: 158 20% 7%;
+    --card-foreground: 0 0% 98%;
+    --popover: 158 20% 7%;
+    --popover-foreground: 0 0% 98%;
+    --primary: 158 79% 25%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 158 20% 12%;
+    --secondary-foreground: 158 79% 90%;
+    --muted: 158 20% 12%;
+    --muted-foreground: 158 10% 70%;
+    --accent: 142 71% 45%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 158 20% 15%;
+    --input: 158 20% 15%;
+    --ring: 158 79% 25%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground font-body transition-colors duration-300;
+    -webkit-tap-highlight-color: transparent;
+    overflow-x: hidden;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-headline;
+  }
+}
+
+/* Mobile Safe Area Improvements */
+.safe-area-bottom {
+  padding-bottom: env(safe-area-inset-bottom, 1rem);
+}
+
+button, a {
+  @apply min-h-[48px] min-w-[48px] touch-manipulation;
+}
+
+input, textarea {
+  @apply text-base md:text-sm; /* Prevent auto-zoom on iOS */
+}
