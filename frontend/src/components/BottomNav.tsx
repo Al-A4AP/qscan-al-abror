@@ -1,7 +1,7 @@
 import { Link, useLocation } from "react-router-dom";
 import { LayoutDashboard, QrCode, ClipboardList, LogOut, Sun, Moon } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { useTheme } from "@/components/ThemeProvider";
+import { useTheme } from "@/hooks/use-theme";
 
 const NAV_ITEMS = [
   { label: "Beranda", icon: LayoutDashboard, href: "/" },
