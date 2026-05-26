@@ -18,16 +18,27 @@ export const CouponPrintTemplate = forwardRef<HTMLDivElement, Props>(({ recipien
       <div ref={ref} className="bg-white text-black p-0 m-0">
         <style type="text/css" media="print">
           {`
-            @page { size: A4 portrait; margin: 10mm; }
-            body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-            div.page-break:not(:last-child) { page-break-after: always; break-after: page; }
+            @page { size: A4 portrait; margin: 0; }
+            body { -webkit-print-color-adjust: exact; print-color-adjust: exact; margin: 0; }
+            .print-page { 
+              width: 210mm; 
+              height: 296mm; 
+              padding: 10mm; 
+              box-sizing: border-box; 
+              page-break-after: always;
+              break-after: page;
+            }
+            .print-page:last-child { 
+              page-break-after: auto; 
+              break-after: auto; 
+            }
           `}
         </style>
         
         {chunks.map((chunk, pageIndex) => (
-          <div key={pageIndex} className="page-break flex flex-col justify-start gap-[5mm] pb-[5mm]">
+          <div key={pageIndex} className="print-page flex flex-col justify-start gap-[4mm] bg-white">
             {chunk.map((r) => (
-              <div key={r.id} className="w-full h-[50mm] border-2 border-dashed border-gray-600 flex rounded-xl overflow-hidden box-border bg-white">
+              <div key={r.id} className="w-full h-[52mm] border-[2px] border-dashed border-gray-600 flex rounded-xl overflow-hidden box-border bg-white shrink-0">
                 {/* Left Side: Branding & Details */}
                 <div className="flex-1 p-5 flex flex-col justify-center border-r-2 border-dashed border-gray-400 relative">
                   <div className="absolute top-0 left-0 w-2 h-full bg-primary"></div>
@@ -37,9 +48,12 @@ export const CouponPrintTemplate = forwardRef<HTMLDivElement, Props>(({ recipien
                       <div className="text-[10px] font-bold text-gray-500 uppercase tracking-wider">Penerima</div>
                       <div className="text-lg font-bold text-gray-900 leading-none">{r.name}</div>
                       
-                      <div className="flex gap-4 mt-1.5">
+                      <div className="flex gap-4 mt-1.5 items-center">
                         <div className="text-[9px] text-gray-800"><span className="font-bold">Alamat:</span> {r.address || '-'}</div>
-                        <div className="text-[27px] text-gray-800"><span className="font-bold">Keterangan:</span> {r.note || '-'}</div>
+                        <div className="text-[9px] text-gray-800 flex items-baseline gap-1">
+                          <span className="font-bold">Keterangan:</span>
+                          <span className="text-lg font-bold text-gray-900">{r.note || '-'}</span>
+                        </div>
                       </div>
                     </div>
                     
