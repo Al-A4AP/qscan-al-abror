@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import { BottomNav } from "@/components/BottomNav";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
@@ -7,7 +8,6 @@ import {
   Beef, 
   CheckCircle2, 
   TrendingUp,
-  MapPin,
   Clock
 } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
@@ -23,6 +23,40 @@ export default function Dashboard() {
 
   const cows = animals.filter((a: Animal) => a.type === "Sapi").length;
   const goats = animals.filter((a: Animal) => a.type !== "Sapi").length;
+
+  const groupStats = useMemo(() => {
+    const groups: Record<string, { total: number, taken: number }> = {};
+    
+    recipients.forEach((r: Recipient) => {
+      let groupName = r.note?.trim() || "Umum";
+      if (groupName.toUpperCase().startsWith("ART")) {
+        groupName = "ART";
+      }
+      
+      if (!groups[groupName]) {
+        groups[groupName] = { total: 0, taken: 0 };
+      }
+      groups[groupName].total += 1;
+      if (r.status === "Sudah") {
+        groups[groupName].taken += 1;
+      }
+    });
+
+    return Object.entries(groups).map(([name, stats]) => {
+      const progress = Math.round((stats.taken / stats.total) * 100);
+      let status = "Menunggu";
+      if (progress > 0 && progress < 100) status = "Berjalan";
+      if (progress === 100) status = "Selesai";
+      
+      return {
+        area: name,
+        progress,
+        status,
+        taken: stats.taken,
+        total: stats.total
+      };
+    }).sort((a, b) => b.total - a.total);
+  }, [recipients]);
 
   return (
     <div className="flex flex-col min-h-screen bg-background p-4 space-y-6 pb-28">
@@ -97,20 +131,19 @@ export default function Dashboard() {
 
       <div className="space-y-3">
         <h3 className="font-headline font-bold text-lg flex items-center gap-2 text-foreground">
-          <MapPin size={20} className="text-primary" /> Pantauan Wilayah
+          <Users size={20} className="text-primary" /> Pantauan Kelompok
         </h3>
         <div className="space-y-3">
-          {[
-            { area: "Blok A (RT 01-03)", progress: progressPercent > 90 ? 100 : progressPercent + 5, status: "Aktif" },
-            { area: "Blok B (RT 04-06)", progress: progressPercent, status: "Berjalan" },
-            { area: "Blok C (RT 07-09)", progress: Math.max(0, progressPercent - 10), status: "Menunggu" },
-          ].map((item, i) => (
+          {groupStats.map((item, i) => (
             <div key={i} className="flex items-center justify-between p-4 bg-card rounded-2xl shadow-sm border-2 border-border/50">
               <div className="space-y-1">
-                <p className="font-bold text-sm text-foreground">{item.area}</p>
-                <Badge variant='outline' className="text-[10px] font-bold">
-                  {item.status}
-                </Badge>
+                <p className="font-bold text-sm text-foreground capitalize">{item.area}</p>
+                <div className="flex items-center gap-2">
+                  <Badge variant='outline' className="text-[10px] font-bold">
+                    {item.status}
+                  </Badge>
+                  <span className="text-[10px] text-muted-foreground font-semibold">{item.taken}/{item.total} Diambil</span>
+                </div>
               </div>
               <div className="text-right">
                 <p className="text-lg font-headline font-bold text-primary">{item.progress}%</p>
@@ -118,6 +151,9 @@ export default function Dashboard() {
               </div>
             </div>
           ))}
+          {groupStats.length === 0 && (
+            <p className="text-sm text-muted-foreground text-center py-4">Belum ada data kelompok.</p>
+          )}
         </div>
       </div>
 
