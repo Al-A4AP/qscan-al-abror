@@ -94,7 +94,12 @@ export default function Registry() {
   const filteredRecipients = useMemo(() => {
     return recipients.filter((r: Recipient) => {
       const matchesSearch = r.name.toLowerCase().includes(searchTerm.toLowerCase()) || r.id.includes(searchTerm);
-      const matchesFilter = filterStatus === "Semua" || r.status === filterStatus;
+      
+      let matchesFilter = false;
+      if (filterStatus === "Semua") matchesFilter = true;
+      else if (filterStatus === "Sudah") matchesFilter = r.status === "Sudah";
+      else if (filterStatus === "Belum") matchesFilter = r.status !== "Sudah";
+
       return matchesSearch && matchesFilter;
     });
   }, [searchTerm, filterStatus, recipients]);
