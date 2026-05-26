@@ -39,7 +39,7 @@ export const CouponPrintTemplate = forwardRef<HTMLDivElement, Props>(({ recipien
                       
                       <div className="flex gap-4 mt-1.5">
                         <div className="text-[9px] text-gray-800"><span className="font-bold">Alamat:</span> {r.address || '-'}</div>
-                        <div className="text-[9px] text-gray-800"><span className="font-bold">Keterangan:</span> {r.note || '-'}</div>
+                        <div className="text-[27px] text-gray-800"><span className="font-bold">Keterangan:</span> {r.note || '-'}</div>
                       </div>
                     </div>
                     
