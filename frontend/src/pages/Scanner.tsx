@@ -156,7 +156,11 @@ export default function Scanner() {
                   )}
                 </div>
                 <div className="space-y-1">
-                  <h2 className={cn("text-3xl font-headline font-bold uppercase", status === 'success' ? "text-primary" : status === 'duplicate' ? "SUDAH DIAMBIL" : "DATA TIDAK DITEMUKAN")}>
+                  <h2 className={cn("text-3xl font-headline font-bold uppercase",
+                    status === 'success' ? "text-primary" :
+                    status === 'duplicate' ? "text-destructive" :
+                    "text-muted-foreground"
+                  )}>
                     {status === 'success' ? "KUPON VALID" : status === 'duplicate' ? "SUDAH DIAMBIL" : "DATA TIDAK DITEMUKAN"}
                   </h2>
                   <p className="text-lg font-mono font-bold text-muted-foreground">ID: {scanningId}</p>

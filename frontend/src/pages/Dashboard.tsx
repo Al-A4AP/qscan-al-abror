@@ -3,19 +3,23 @@ import { BottomNav } from "@/components/BottomNav";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
+import { Skeleton } from "@/components/ui/skeleton";
 import { 
   Users, 
   Beef, 
   CheckCircle2, 
   TrendingUp,
-  Clock
+  Clock,
+  WifiOff
 } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { getRecipients, getAnimals, type Recipient, type Animal } from "@/api";
 
 export default function Dashboard() {
-  const { data: recipients = [] } = useQuery({ queryKey: ['recipients'], queryFn: getRecipients });
-  const { data: animals = [] } = useQuery({ queryKey: ['animals'], queryFn: getAnimals });
+  const { data: recipients = [], isLoading: recipientsLoading, isError: recipientsError } = useQuery({ queryKey: ['recipients'], queryFn: getRecipients });
+  const { data: animals = [], isLoading: animalsLoading } = useQuery({ queryKey: ['animals'], queryFn: getAnimals });
+
+  const isLoading = recipientsLoading || animalsLoading;
 
   const totalRecipients = recipients.length;
   const takenCount = recipients.filter((r: Recipient) => r.status === "Sudah").length;
@@ -57,6 +61,48 @@ export default function Dashboard() {
       };
     }).sort((a, b) => b.total - a.total);
   }, [recipients]);
+
+  if (isLoading) {
+    return (
+      <div className="flex flex-col min-h-screen bg-background p-4 space-y-6 pb-28">
+        <header className="flex justify-between items-center pt-2">
+          <div>
+            <h1 className="text-3xl font-headline font-bold text-primary tracking-tight">AL-ABROR Q</h1>
+            <p className="text-muted-foreground text-sm font-medium">Sistem Manajemen Kurban</p>
+          </div>
+          <Badge variant="outline" className="text-primary border-primary">LIVE</Badge>
+        </header>
+        <div className="grid grid-cols-2 gap-4">
+          <Skeleton className="h-24 rounded-2xl" />
+          <Skeleton className="h-24 rounded-2xl" />
+        </div>
+        <Skeleton className="h-44 rounded-3xl" />
+        <Skeleton className="h-32 rounded-2xl" />
+        <Skeleton className="h-32 rounded-2xl" />
+        <BottomNav />
+      </div>
+    );
+  }
+
+  if (recipientsError) {
+    return (
+      <div className="flex flex-col min-h-screen bg-background p-4 pb-28">
+        <header className="flex justify-between items-center pt-2">
+          <h1 className="text-3xl font-headline font-bold text-primary tracking-tight">AL-ABROR Q</h1>
+        </header>
+        <div className="flex-1 flex flex-col items-center justify-center gap-4 text-center">
+          <div className="p-4 bg-destructive/10 rounded-full">
+            <WifiOff size={48} className="text-destructive" />
+          </div>
+          <div>
+            <p className="font-bold text-lg text-destructive">Gagal Memuat Data</p>
+            <p className="text-sm text-muted-foreground mt-1">Periksa koneksi internet atau coba login ulang.</p>
+          </div>
+        </div>
+        <BottomNav />
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col min-h-screen bg-background p-4 space-y-6 pb-28">

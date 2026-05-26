@@ -25,11 +25,11 @@ export interface Animal {
 }
 
 export interface LoginCredentials {
-  email?: string;
-  password?: string;
+  email: string;
+  password: string;
 }
 
-// Interceptor to add token to every request
+// Interceptor untuk menambahkan token ke setiap request
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem('token');
   if (token) {
@@ -37,6 +37,19 @@ api.interceptors.request.use((config) => {
   }
   return config;
 });
+
+// Interceptor untuk handle token expired / unauthorized — auto-redirect ke login
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response?.status === 401 || error.response?.status === 403) {
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      window.location.href = '/login';
+    }
+    return Promise.reject(error);
+  }
+);
 
 export const loginUser = async (credentials: LoginCredentials) => {
   const response = await api.post('/login', credentials);

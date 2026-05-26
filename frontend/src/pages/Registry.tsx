@@ -55,8 +55,10 @@ export default function Registry() {
     documentTitle: "Kupon_Kurban",
   });
 
-  const { data: recipients = [] } = useQuery({ queryKey: ['recipients'], queryFn: getRecipients });
-  const { data: animals = [] } = useQuery({ queryKey: ['animals'], queryFn: getAnimals });
+  const { data: recipients = [], isLoading: recipientsLoading } = useQuery({ queryKey: ['recipients'], queryFn: getRecipients });
+  const { data: animals = [], isLoading: animalsLoading } = useQuery({ queryKey: ['animals'], queryFn: getAnimals });
+
+  const isDataLoading = recipientsLoading || animalsLoading;
 
   const recipientMutation = useMutation({
     mutationFn: saveRecipient,
@@ -237,7 +239,13 @@ export default function Registry() {
       <header className="pt-2 flex justify-between items-center">
         <div>
           <h1 className="text-3xl font-headline font-bold text-primary uppercase tracking-tight">Registri</h1>
-          <p className="text-muted-foreground text-xs font-bold uppercase tracking-widest">Data Terpusat</p>
+          <p className="text-muted-foreground text-xs font-bold uppercase tracking-widest">
+            {isDataLoading ? (
+              <span className="text-amber-500 animate-pulse">⟳ Memuat data...</span>
+            ) : (
+              "Data Terpusat"
+            )}
+          </p>
         </div>
         <div className="flex gap-2">
           <input type="file" accept=".csv" className="hidden" ref={fileInputRef} onChange={handleUpload} />
